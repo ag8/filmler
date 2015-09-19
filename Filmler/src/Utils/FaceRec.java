@@ -110,7 +110,7 @@ public class FaceRec {
         return results;
     }
 
-    public static void faceAnalyze(String imageURL) throws IOException {
+    public static void faceAnalyze(String imageURL, boolean riskEdges) throws IOException {
         List<Float> faceHeights = new ArrayList<Float>();
         List<Float> faceCenterXs = new ArrayList<Float>();
         List<Float> faceCenterYs = new ArrayList<Float>();
@@ -229,8 +229,14 @@ public class FaceRec {
         }
 
         for (int i = 0; i < actualFaceHeights.size(); i++) {
+            Rectangle rect;
+
             BufferedImage img = ImageIO.read(new URL(imageURL));
-            Rectangle rect = new Rectangle((int)Math.floor(topCornerXs.get(i)), (int)Math.floor(topCornerYs.get(i)), (int)Math.floor(actualFaceHeights.get(i)), (int)Math.floor(actualFaceHeights.get(i)));
+            if (riskEdges) {
+                rect = new Rectangle(0, 0, 1, 1); //Improve this @derikk
+            } else {
+                rect = new Rectangle((int) Math.floor(topCornerXs.get(i)), (int) Math.floor(topCornerYs.get(i)), (int) Math.floor(actualFaceHeights.get(i)), (int) Math.floor(actualFaceHeights.get(i)));
+            }
 
             Utils.cropAndSave(img, rect, "image" + i + "");
         }

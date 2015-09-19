@@ -10,7 +10,7 @@ import java.net.URL;
 import java.util.List;
 
 public class Main {
-    String imageURL = "http://sigmacamp.org/sites/default/files/galleries/301/20140817-A96A8206.jpg";
+    String imageURL = "http://blog.cleveland.com/nationworld_impact/2009/09/large_barack-obama-cabinet-091009.jpg";
 
     public static void main(String[] args) {
         boolean success = false;
@@ -29,10 +29,9 @@ public class Main {
 
         int faceNum = FaceRec.getFaceNum(imageURL);
 
-        FaceRec.faceAnalyze(imageURL);
+        FaceRec.faceAnalyze(imageURL, false);
 
         System.out.println(faceNum);
-
         success = true;
         return success;
     }

@@ -28,8 +28,8 @@
       <file leaf-file-name="Main.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/org/gandkco/filmler/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.70974153" vertical-offset="153" max-vertical-offset="765">
-              <caret line="30" column="0" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.56063616" vertical-offset="245" max-vertical-offset="748">
+              <caret line="31" column="40" selection-start-line="31" selection-start-column="40" selection-end-line="31" selection-end-column="40" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -40,35 +40,21 @@
       <file leaf-file-name="FaceRec.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Utils/FaceRec.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="2982" max-vertical-offset="4454">
-              <caret line="238" column="0" selection-start-line="238" selection-start-column="0" selection-end-line="238" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="3628" max-vertical-offset="4556">
+              <caret line="231" column="27" selection-start-line="231" selection-start-column="27" selection-end-line="231" selection-end-column="27" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#4496#4503#0" expanded="true" />
-                <element signature="e#4555#4562#0" expanded="true" />
-                <element signature="e#4614#4621#0" expanded="true" />
-                <element signature="e#7055#7062#0" expanded="true" />
-                <element signature="e#7318#7325#0" expanded="true" />
-                <element signature="e#7687#7694#0" expanded="true" />
-                <element signature="e#7849#7856#0" expanded="true" />
-                <element signature="e#8070#8077#0" expanded="true" />
-                <element signature="e#8798#8806#0" expanded="true" />
+                <element signature="e#4515#4522#0" expanded="true" />
+                <element signature="e#4574#4581#0" expanded="true" />
+                <element signature="e#4633#4640#0" expanded="true" />
+                <element signature="e#7074#7081#0" expanded="true" />
+                <element signature="e#7337#7344#0" expanded="true" />
+                <element signature="e#7706#7713#0" expanded="true" />
+                <element signature="e#7868#7875#0" expanded="true" />
+                <element signature="e#8089#8096#0" expanded="true" />
+                <element signature="e#8981#8989#0" expanded="true" />
               </folding>
             </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="image0.jpg" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/images/image0.jpg">
-          <provider selected="true" editor-type-id="images">
-            <state />
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="image1.jpg" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/images/image1.jpg">
-          <provider selected="true" editor-type-id="images">
-            <state />
           </provider>
         </entry>
       </file>
@@ -101,8 +87,8 @@
       <list>
         <option value="$PROJECT_DIR$/src/Utils/Constants.java" />
         <option value="$PROJECT_DIR$/src/Utils/Utils.java" />
-        <option value="$PROJECT_DIR$/src/org/gandkco/filmler/Main.java" />
         <option value="$PROJECT_DIR$/src/Utils/FaceRec.java" />
+        <option value="$PROJECT_DIR$/src/org/gandkco/filmler/Main.java" />
       </list>
     </option>
   </component>
@@ -494,26 +480,21 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/images/image.jpg">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Utils/FaceRec.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="2982" max-vertical-offset="4454">
-          <caret line="238" column="0" selection-start-line="238" selection-start-column="0" selection-end-line="238" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="3628" max-vertical-offset="4556">
+          <caret line="231" column="27" selection-start-line="231" selection-start-column="27" selection-end-line="231" selection-end-column="27" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#4496#4503#0" expanded="true" />
-            <element signature="e#4555#4562#0" expanded="true" />
-            <element signature="e#4614#4621#0" expanded="true" />
-            <element signature="e#7055#7062#0" expanded="true" />
-            <element signature="e#7318#7325#0" expanded="true" />
-            <element signature="e#7687#7694#0" expanded="true" />
-            <element signature="e#7849#7856#0" expanded="true" />
-            <element signature="e#8070#8077#0" expanded="true" />
-            <element signature="e#8798#8806#0" expanded="true" />
+            <element signature="e#4515#4522#0" expanded="true" />
+            <element signature="e#4574#4581#0" expanded="true" />
+            <element signature="e#4633#4640#0" expanded="true" />
+            <element signature="e#7074#7081#0" expanded="true" />
+            <element signature="e#7337#7344#0" expanded="true" />
+            <element signature="e#7706#7713#0" expanded="true" />
+            <element signature="e#7868#7875#0" expanded="true" />
+            <element signature="e#8089#8096#0" expanded="true" />
+            <element signature="e#8981#8989#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -530,8 +511,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/org/gandkco/filmler/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.70974153" vertical-offset="153" max-vertical-offset="765">
-          <caret line="30" column="0" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.56063616" vertical-offset="245" max-vertical-offset="748">
+          <caret line="31" column="40" selection-start-line="31" selection-start-column="40" selection-end-line="31" selection-end-column="40" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
