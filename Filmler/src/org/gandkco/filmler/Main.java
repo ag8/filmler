@@ -10,6 +10,8 @@ import java.net.URL;
 import java.util.List;
 
 public class Main {
+    String imageURL = "http://sigmacamp.org/sites/default/files/galleries/301/20140817-A96A8206.jpg";
+
     public static void main(String[] args) {
         boolean success = false;
         try {
@@ -25,7 +27,9 @@ public class Main {
     public boolean analyze() throws IOException, URISyntaxException {
         boolean success = false;
 
-        int faceNum = FaceRec.getFaceNum("http://sigmacamp.org/sites/default/files/galleries/301/20140817-A96A8206.jpg");
+        int faceNum = FaceRec.getFaceNum(imageURL);
+
+        FaceRec.faceAnalyze(imageURL);
 
         System.out.println(faceNum);
 
