@@ -6,30 +6,35 @@ import Utils.Utils;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 import Utils.*;
 
 public class Main {
     public static Map<String, String> imagesAndPeople = new HashMap<>();
 
-    static String[] imageURLs = {
-            "http://sigmacamp.org/sites/default/files/galleries/301/20140817-A96A8206.jpg", //Dashka and Christina
-            "http://sigmacamp.org/sites/default/files/galleries/297/20140815-A96A7804.jpg", //Shmoo
-            "http://sigmacamp.org/sites/default/files/galleries/303/20140818-A96A9568.jpg", //Dashka and Christina
-            "http://sigmacamp.org/sites/default/files/galleries/303/20140818-A96A9638.jpg",
-            "http://sigmacamp.org/sites/default/files/galleries/303/20140818-A96A9667.jpg",
-            "http://sigmacamp.org/sites/default/files/galleries/303/20140818-A96A9633.jpg"  //Dashka, Lena,
-    };
+    static String[] imageURLs;
 
     public static List<Person> officialListOfPeople = new ArrayList<>();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException {
+        //Set up main image urls from urls.gak
+
+        AtomicReference<String> token1 = new AtomicReference<>();
+        Scanner inFile1 = new Scanner(new File("C:\\Users\\Irochka\\Documents\\GitHub\\filmler\\Filmler\\files\\urls.gak")).useDelimiter(",\\s*");
+        List<String> temps = new ArrayList<>();
+        while (inFile1.hasNext()) {
+            token1.set(inFile1.next());
+            temps.add(token1.get());
+        }
+        inFile1.close();
+        imageURLs = temps.toArray(new String[temps.size()]);
+
+
         TagFaces.run(args);
 
         System.out.println(imagesAndPeople);
@@ -37,9 +42,7 @@ public class Main {
         boolean success = false;
         try {
             success = new Main().analyze();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (URISyntaxException e) {
+        } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
         }
 
@@ -80,8 +83,6 @@ public class Main {
     }
 
     public boolean analyzeInteractions() throws IOException {
-        boolean success = false;
-
         for ( Person p : officialListOfPeople ) {
             for (String localURL : p.getLocalURLs()) {
                 System.out.println("Person " + p.getName() + " has local URL " + localURL);
@@ -90,7 +91,7 @@ public class Main {
                 try {
                     img = ImageIO.read(new File(localURL));
                 } catch (IOException e) {
-
+                    e.printStackTrace();
                 }
 
                 String base64string = Utils.encodeToString(img, "jpg");
@@ -113,20 +114,15 @@ public class Main {
 //        FaceRec.groupCreate("test1", "sigmapeople1");
 //        FaceRec.personCreate()
 
-        success = true;
-        return success;
+        return true;
     }
 
     public boolean analyze() throws IOException, URISyntaxException {
-        boolean success = false;
-
-        for (int i = 0; i < imageURLs.length; i++) {
-            String imageURL = imageURLs[i];
+        for (String imageURL : imageURLs) {
             System.out.println("Doing " + imageURL);
             FaceRec.faceAnalyze(imageURL, false);
         }
 
-        success = true;
-        return success;
+        return true;
     }
 }
