@@ -39,6 +39,22 @@ public class FaceRec {
         return results;
     }
 
+    public static String groupGetInfo(String groupName) throws IOException {
+        String results = "";
+
+        //https://apius.faceplusplus.com/v2/group/get_info?api_secret=YOUR_API_SECRET&api_key=YOUR_API_KEY&group_name=Family
+        URL url = new URL("https://apius.faceplusplus.com/v2/group/get_info?api_secret=" + Constants.SECRET_KEY + "&api_key=" + Constants.API_KEY + "&group_name=" + groupName);
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(url.openStream()));
+
+        String inputLine;
+        while ((inputLine = in.readLine()) != null)
+            results += inputLine + "\n";
+        in.close();
+
+        return results;
+    }
+
 
     /**
      * Creates a person.
@@ -145,9 +161,9 @@ public class FaceRec {
     }
 
     public static void faceAnalyze(String imageURL, boolean riskEdges) throws IOException {
-        List<Float> faceHeights = new ArrayList<Float>();
-        List<Float> faceCenterXs = new ArrayList<Float>();
-        List<Float> faceCenterYs = new ArrayList<Float>();
+        List<Float> faceHeights = new ArrayList<>();
+        List<Float> faceCenterXs = new ArrayList<>();
+        List<Float> faceCenterYs = new ArrayList<>();
 
         String results = getFaces(imageURL);
 

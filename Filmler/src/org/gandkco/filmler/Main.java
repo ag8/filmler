@@ -111,8 +111,12 @@ public class Main {
             }
         }
 
-//        FaceRec.groupCreate("test1", "sigmapeople1");
-//        FaceRec.personCreate()
+        FaceRec.groupCreate("test1", "sigmapeople1");
+        for (Person p : officialListOfPeople) {
+            FaceRec.personCreate("test1", p.getName(), "sigmapeople1");
+        }
+
+        System.out.println(FaceRec.groupGetInfo("sigmapeople1"));
 
         return true;
     }
