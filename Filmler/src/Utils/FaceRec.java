@@ -1,7 +1,6 @@
 package Utils;
 
 import org.apache.commons.lang3.StringUtils;
-import org.w3c.dom.css.Rect;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -9,14 +8,17 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.*;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
 public class FaceRec {
     /**
      * Creates a group
-     * @param groupTag - the group tag
+     *
+     * @param groupTag  - the group tag
      * @param groupName - the group name
      * @return - JSON response
      * @throws IOException - Yeah, well, sucks.
@@ -40,9 +42,10 @@ public class FaceRec {
 
     /**
      * Creates a person.
-     * @param tag - the person's tag
+     *
+     * @param tag        - the person's tag
      * @param personName - the person's name
-     * @param groupName - the group name
+     * @param groupName  - the group name
      * @return - the JSON response
      * @throws IOException - sucks
      */
@@ -62,9 +65,40 @@ public class FaceRec {
         return results;
     }
 
+
+    /**
+     * Adds a face to the Face++ database.
+     *
+     * @param imageURL - the url of the image
+     * @return - the unique ID of the image
+     */
+    public static String addFace(String imageURL) throws IOException {
+        String results = "";
+
+        //https://apius.faceplusplus.com/v2/detection/detect?url=http%3A%2F%2Ffaceplusplus.com%2Fstatic%2Fimg%2Fdemo%2F1.jpg&api_secret=YOUR_API_SECRET&api_key=YOUR_API_KEY&attribute=glass,pose,gender,age,race,smiling
+        URL url = new URL("https://apius.faceplusplus.com/v2/detection/detect?url=" + URLEncoder.encode(imageURL) + "&api_secret=" + Constants.SECRET_KEY + "&api_key=" + Constants.API_KEY + "&attribute=glass,pose,gender,age,race,smiling");
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(url.openStream()));
+
+        String inputLine;
+        while ((inputLine = in.readLine()) != null)
+            results += inputLine + "\n";
+        in.close();
+
+        String[] parts = results.split("\"face_id\": \"");
+        String[] subparts = parts[1].split("\",\n" +
+                "            \"position\": \\{\n" +
+                "                \"center\": \\{\n" +
+                "                    \"x\": ");
+        String id = subparts[0];
+
+        return id;
+    }
+
     /**
      * Creates a faceset.
-     * @param tag - the faceset's tag
+     *
+     * @param tag         - the faceset's tag
      * @param facesetName - the faceset's name
      * @return - the JSON response
      * @throws IOException - I/O Exception
@@ -172,8 +206,6 @@ public class FaceRec {
         }
 
 
-
-
         //Now, we crop the faces
 
         //Get absolute pixels
@@ -220,12 +252,12 @@ public class FaceRec {
 
         List<Float> topCornerXs = new ArrayList<Float>();
         for (int i = 0; i < actualFaceHeights.size(); i++) {
-            topCornerXs.add(actualXValues.get(i) - actualFaceHeights.get(i) / (float)2.0);
+            topCornerXs.add(actualXValues.get(i) - actualFaceHeights.get(i) / (float) 2.0);
         }
 
         List<Float> topCornerYs = new ArrayList<Float>();
         for (int i = 0; i < actualFaceHeights.size(); i++) {
-            topCornerYs.add(actualYValues.get(i) - actualFaceHeights.get(i) / (float)2.0);
+            topCornerYs.add(actualYValues.get(i) - actualFaceHeights.get(i) / (float) 2.0);
         }
 
         for (int i = 0; i < actualFaceHeights.size(); i++) {
@@ -238,7 +270,8 @@ public class FaceRec {
                 rect = new Rectangle((int) Math.floor(topCornerXs.get(i)), (int) Math.floor(topCornerYs.get(i)), (int) Math.floor(actualFaceHeights.get(i)), (int) Math.floor(actualFaceHeights.get(i)));
             }
 
-            Utils.cropAndSave(img, rect, "image" + i + "");
+            Utils.cropAndSave(img, rect, "image" + Variables.imageNumber + "");
+            Variables.imageNumber++;
         }
     }
 
