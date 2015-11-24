@@ -1,8 +1,6 @@
 package Utils;
 
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -16,7 +14,6 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import org.gandkco.filmler.Main;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -25,17 +22,16 @@ import java.util.List;
 import java.util.Map;
 
 public class TagFaces extends Application {
-    final String urlBase = "file:///" + System.getProperty("user.dir") + "\\images\\";
-    public static Map<String, String> mp = new HashMap<>();
+    final String urlBase = System.getProperty("user.dir") + "/images/";
+    public static Map<String, String> mp = new HashMap<>(); // Map from photo URLs to names
     public static int photoNum = 0;
-    public static List<String> urls = new ArrayList<>();
+    public static List<String> urls = new ArrayList<>();    // List of photo URLs
 
     FlowPane tagPane;
     FlowPane picPane;
 
     Image photo;
     ImageView maskView;
-    static int mainLineOfficianCountingReplacement3S = 0;
     static Stage s;
 
     public static void run(String args[]) {
@@ -43,62 +39,39 @@ public class TagFaces extends Application {
     }
 
     @Override
-
+    /**
+     * Create a list of photo URLs
+     */
     public void start(Stage primaryStage) {
-        int i = 0;
-
-        while (true) {
-            ////System.out.println(i);
-            File f = new File("C:\\Users\\Irochka\\Documents\\GitHub\\filmler\\Filmler\\images\\image" + i + ".jpg");
-            ////System.out.println(f.getAbsolutePath());
-            boolean cR = f.exists();
-            ////System.out.println(cR);
-            if (!cR) {
-                break;
-            }
-            urls.add("image" + i + ".jpg");
-            i++;
+        System.out.println(urlBase);
+        boolean exists = true;
+        for (int i = 0; exists; i++) {
+            File f = new File(urlBase + "image" + i + ".jpg");
+            System.out.println(f.getAbsolutePath());
+            exists = f.exists();
+            if (exists) urls.add("image" + i + ".jpg");
         }
-
-        ////System.out.println("Length: " + urls.size());
-
         s = primaryStage;
-        domainLineOfficianCountingReplacement3S(mainLineOfficianCountingReplacement3S);
+        getName(urls.get(0)); // Open the first window explicitly. The following windows are opened after tagging.
     }
 
-    private void handleClick(String text) {
-        mp.put(urls.get(photoNum), text);
-        System.out.println("Name: " + text + ".");
-        System.out.println(mp);
-        photoNum++;
-        if (mainLineOfficianCountingReplacement3S < urls.size()) {
-            //System.out.println("THE mainLineOfficianCountingReplacement3S IS " + mainLineOfficianCountingReplacement3S + "!!!");
-            photo = new Image(urlBase + urls.get(photoNum), 300, 300, false, false);
-            maskView = new ImageView(photo);
-            //System.out.println("s:" + s);
-            s.close();
-            new TagFaces().domainLineOfficianCountingReplacement3S(mainLineOfficianCountingReplacement3S);
-        } else {
-            s.close();
-            //System.out.println("All done!");
-            Main.imagesAndPeople = mp;
-        }
-    }
 
-    private void domainLineOfficianCountingReplacement3S(int photoNum) {
-        mainLineOfficianCountingReplacement3S++;
-        //System.out.println("s3:" + s);
+
+    /**
+     * Get name
+     * @param url the filepath of the photo
+     */
+    private void getName(String url) {
+		/* Window setup */
         s = new Stage();
-        //System.out.println("s2:" + s);
         s.setTitle("Tag Photos");
         BorderPane componentLayout = new BorderPane();
         componentLayout.setPadding(new Insets(20));
-
         tagPane = new FlowPane();
         picPane = new FlowPane();
         tagPane.setHgap(20);
         tagPane.setColumnHalignment(HPos.CENTER);
-//picPane.setColumnHalignment(HPos.CENTER);
+        //picPane.setColumnHalignment(HPos.CENTER);
 
         Text directions = new Text("Who is this?");
         directions.setFont(new Font(24));
@@ -112,22 +85,15 @@ public class TagFaces extends Application {
         Button nameSubmit = new Button("Tag");
         nameSubmit.setDefaultButton(true);
 
-        photo = new Image(urlBase + urls.get(photoNum), 300, 300, false, false);
+        photo = new Image("file://" + urlBase + url, 300, 300, false, false);
         ImageView maskView = new ImageView(photo);
 //maskView.setX(-20);
 //maskView.setY(-20);
 //final Circle mask = new Circle(200, 220, 150);
 //maskView.setClip(mask);
 
+        nameSubmit.setOnAction(e -> new TagFaces().handleClick(nameField.getText()));
 
-        nameSubmit.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-// Button click stuff here
-                new TagFaces().handleClick(nameField.getText());
-
-            }
-        });
 
         tagPane.getChildren().add(textLabel);
         tagPane.getChildren().add(nameField);
@@ -139,9 +105,25 @@ public class TagFaces extends Application {
         componentLayout.getChildren().add(picPane);
         Scene appScene = new Scene(componentLayout, 400, 500);
 
-//Add the Scene to the Stage
+        //Add the Scene to the Stage
         s.setScene(appScene);
         s.setMinWidth(400);
         s.show();
+    }
+
+
+    private void handleClick(String name) {
+        mp.put(urls.get(photoNum), name);
+        System.out.println("Photo Number: " + photoNum + ", Name: " + name + ".");
+        System.out.println(mp);
+        s.close();
+        photoNum++;
+        if (photoNum < urls.size()) {
+            getName(urls.get(photoNum));
+        } else {
+            s.close();
+            System.out.println("All done!");
+            //Main.imagesAndPeople = mp;
+        }
     }
 }
