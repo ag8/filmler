@@ -11,6 +11,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -56,9 +57,8 @@ public class TagFaces extends Application {
     }
 
 
-
     /**
-     * Get name
+     * Get name from user
      * @param url the filepath of the photo
      */
     private void getName(String url) {
@@ -70,6 +70,8 @@ public class TagFaces extends Application {
         tagPane = new FlowPane();
         picPane = new FlowPane();
         tagPane.setHgap(20);
+        picPane.setVgap(20);
+        picPane.setHgap(40);
         tagPane.setColumnHalignment(HPos.CENTER);
         //picPane.setColumnHalignment(HPos.CENTER);
 
@@ -87,22 +89,19 @@ public class TagFaces extends Application {
 
         photo = new Image("file://" + urlBase + url, 300, 300, false, false);
         ImageView maskView = new ImageView(photo);
-//maskView.setX(-20);
-//maskView.setY(-20);
-//final Circle mask = new Circle(200, 220, 150);
-//maskView.setClip(mask);
+        final Circle mask = new Circle(150, 150, 150);
+        maskView.setClip(mask);
 
         nameSubmit.setOnAction(e -> new TagFaces().handleClick(nameField.getText()));
-
 
         tagPane.getChildren().add(textLabel);
         tagPane.getChildren().add(nameField);
         tagPane.getChildren().add(nameSubmit);
+        picPane.getChildren().add(directions);
         picPane.getChildren().add(maskView);
 
         componentLayout.setBottom(tagPane);
-        componentLayout.setTop(directions);
-        componentLayout.getChildren().add(picPane);
+        componentLayout.setTop(picPane);
         Scene appScene = new Scene(componentLayout, 400, 500);
 
         //Add the Scene to the Stage
@@ -111,17 +110,21 @@ public class TagFaces extends Application {
         s.show();
     }
 
-
+    /**
+     * Map photos to names
+     * @param name the name of the person in the photo
+     */
     private void handleClick(String name) {
-        mp.put(urls.get(photoNum), name);
-        System.out.println("Photo Number: " + photoNum + ", Name: " + name + ".");
-        System.out.println(mp);
+        if (!name.isEmpty()) {
+            mp.put(urls.get(photoNum), name);
+            System.out.println("Photo Number: " + photoNum + ", Name: " + name + ".");
+            System.out.println(mp);
+        }
         s.close();
         photoNum++;
         if (photoNum < urls.size()) {
             getName(urls.get(photoNum));
         } else {
-            s.close();
             System.out.println("All done!");
             //Main.imagesAndPeople = mp;
         }
