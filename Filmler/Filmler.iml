@@ -7,8 +7,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="gson-2.3.1" level="project" />
-    <orderEntry type="library" name="commons-lang3-3.4-javadoc" level="project" />
-    <orderEntry type="library" name="commons-codec-1.9" level="project" />
+    <orderEntry type="library" name="httpclient-4.5.2" level="project" />
+    <orderEntry type="library" name="httpcore-4.4.4" level="project" />
   </component>
 </module>

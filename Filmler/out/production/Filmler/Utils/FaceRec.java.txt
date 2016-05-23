@@ -15,22 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FaceRec {
-
-	static int imageNumber = 0;
-
-	/* Gets the text of a webpage */
-	public static String get(String url) throws IOException {
-		BufferedReader in = new BufferedReader(new InputStreamReader(new URL(url).openStream()));
-
-		String inputLine, results = "";
-		while ((inputLine = in.readLine()) != null) {
-			results += inputLine + "\n";
-		}
-		in.close();
-
-		return results;
-	}
-
 	/**
 	 * Creates a group
 	 *
@@ -39,15 +23,36 @@ public class FaceRec {
 	 * @return - JSON response
 	 * @throws IOException - Yeah, well, sucks.
 	 */
-	public static String groupCreate(String groupTag, String groupName) throws IOException {
+   public static String groupCreate(String groupTag, String groupName) throws IOException {
+		String results = "";
+
 		//https://apius.faceplusplus.com/v2/group/create?api_key=YOUR_API_KEY&api_secret=YOUR_API_SECRET&tag=created_by_Alice&group_name=Family
-		return get("https://apius.faceplusplus.com/v2/group/create?api_key=" + Constants.API_KEY + "&api_secret=" + Constants.SECRET_KEY + "&tag=" + groupTag + "&group_name=" + groupName);
+		URL url = new URL("https://apius.faceplusplus.com/v2/group/create?api_key=" + Constants.API_KEY + "&api_secret=" + Constants.SECRET_KEY + "&tag=" + groupTag + "&group_name=" + groupName);
+		BufferedReader in = new BufferedReader(
+				new InputStreamReader(url.openStream()));
+
+		String inputLine;
+		while ((inputLine = in.readLine()) != null)
+			results += inputLine + "\n";
+		in.close();
+
+		return results;
 	}
 
-
 	public static String groupGetInfo(String groupName) throws IOException {
+		String results = "";
+
 		//https://apius.faceplusplus.com/v2/group/get_info?api_secret=YOUR_API_SECRET&api_key=YOUR_API_KEY&group_name=Family
-		return get("https://apius.faceplusplus.com/v2/group/get_info?api_secret=" + Constants.SECRET_KEY + "&api_key=" + Constants.API_KEY + "&group_name=" + groupName);
+		URL url = new URL("https://apius.faceplusplus.com/v2/group/get_info?api_secret=" + Constants.SECRET_KEY + "&api_key=" + Constants.API_KEY + "&group_name=" + groupName);
+		BufferedReader in = new BufferedReader(
+				new InputStreamReader(url.openStream()));
+
+		String inputLine;
+		while ((inputLine = in.readLine()) != null)
+			results += inputLine + "\n";
+		in.close();
+
+		return results;
 	}
 
 
@@ -61,8 +66,19 @@ public class FaceRec {
 	 * @throws IOException - sucks
 	 */
 	public static String personCreate(String tag, String personName, String groupName) throws IOException {
+		String results = "";
+
 		//https://apius.faceplusplus.com/v2/person/create?api_key=YOUR_API_KEY&api_secret=YOUR_API_SECRET&tag=demotest&person_name=NicolasCage&group_name=SuperStars
-		return get("https://apius.faceplusplus.com/v2/person/create?api_key=" + Constants.API_KEY + "&api_secret=" + Constants.SECRET_KEY + "&tag=" + tag + "&person_name=" + personName + "&group_name=" + groupName);
+		URL url = new URL("https://apius.faceplusplus.com/v2/person/create?api_key=" + Constants.API_KEY + "&api_secret=" + Constants.SECRET_KEY + "&tag=" + tag + "&person_name=" + personName + "&group_name=" + groupName);
+		BufferedReader in = new BufferedReader(
+				new InputStreamReader(url.openStream()));
+
+		String inputLine;
+		while ((inputLine = in.readLine()) != null)
+			results += inputLine + "\n";
+		in.close();
+
+		return results;
 	}
 
 
@@ -73,8 +89,17 @@ public class FaceRec {
 	 * @return - the unique ID of the image
 	 */
 	public static String addFace(String imageURL) throws IOException {
-		String results = get("https://apius.faceplusplus.com/v2/detection/detect?url=" + URLEncoder.encode(imageURL) + "&api_secret=" + Constants.SECRET_KEY + "&api_key=" + Constants.API_KEY + "&attribute=pose");
-		//https://apius.faceplusplus.com/v2/detection/detect?url=http%3A%2F%2Ffaceplusplus.com%2Fstatic%2Fimg%2Fdemo%2F1.jpg&api_secret=YOUR_API_SECRET&api_key=YOUR_API_KEY&attribute=pose
+		String results = "";
+
+		//https://apius.faceplusplus.com/v2/detection/detect?url=http%3A%2F%2Ffaceplusplus.com%2Fstatic%2Fimg%2Fdemo%2F1.jpg&api_secret=YOUR_API_SECRET&api_key=YOUR_API_KEY&attribute=glass,pose,gender,age,race,smiling
+		URL url = new URL("https://apius.faceplusplus.com/v2/detection/detect?url=" + URLEncoder.encode(imageURL) + "&api_secret=" + Constants.SECRET_KEY + "&api_key=" + Constants.API_KEY + "&attribute=glass,pose,gender,age,race,smiling");
+		BufferedReader in = new BufferedReader(
+				new InputStreamReader(url.openStream()));
+
+		String inputLine;
+		while ((inputLine = in.readLine()) != null)
+			results += inputLine + "\n";
+		in.close();
 
 		String[] parts = results.split("\"face_id\": \"");
 		String[] subparts = parts[1].split("\",\n" +
@@ -95,8 +120,19 @@ public class FaceRec {
 	 * @throws IOException - I/O Exception
 	 */
 	public static String facesetCreate(String tag, String facesetName) throws IOException {
+		String results = "";
+
 		//https://apius.faceplusplus.com/v2/faceset/create?api_key=YOUR_API_KEY&api_secret=YOUR_API_SECRET&tag=demotest&faceset_name=NicolasCage
-		return get("https://apius.faceplusplus.com/v2/faceset/create?api_key=" + Constants.API_KEY + "&api_secret=" + Constants.SECRET_KEY + "&tag=" + tag + "&faceset_name=" + facesetName);
+		URL url = new URL("https://apius.faceplusplus.com/v2/faceset/create?api_key=" + Constants.API_KEY + "&api_secret=" + Constants.SECRET_KEY + "&tag=" + tag + "&faceset_name=" + facesetName);
+		BufferedReader in = new BufferedReader(
+				new InputStreamReader(url.openStream()));
+
+		String inputLine;
+		while ((inputLine = in.readLine()) != null)
+			results += inputLine + "\n";
+		in.close();
+
+		return results;
 	}
 
 	public static int getFaceNum(String imageURL) throws IOException {
@@ -106,8 +142,20 @@ public class FaceRec {
 	}
 
 	public static String getFaces(String imageURL) throws IOException {
-		//https://apius.faceplusplus.com/v2/detection/detect?url=http://sigmacamp.org/sites/default/files/galleries/301/20140817-A96A8117.jpg&api_secret=bg71y3KbnCUUYQjxqX6pWyH0JNFVsv-L&api_key=aa8b4b83d3c198dab0cb90e915f1cdf1&attribute=pose
-		return get("https://apius.faceplusplus.com/v2/detection/detect?url=" + imageURL + "&api_secret=" + Constants.SECRET_KEY + "&api_key=" + Constants.API_KEY + "&attribute=pose");
+		String results = "";
+
+		//https://apius.faceplusplus.com/v2/detection/detect?url=http://sigmacamp.org/sites/default/files/galleries/301/20140817-A96A8117.jpg&api_secret=bg71y3KbnCUUYQjxqX6pWyH0JNFVsv-L&api_key=aa8b4b83d3c198dab0cb90e915f1cdf1&attribute=glass,pose,gender,age,race,smiling
+		URL url = new URL("https://apius.faceplusplus.com/v2/detection/detect?url=" + imageURL + "&api_secret=" + Constants.SECRET_KEY + "&api_key=" + Constants.API_KEY + "&attribute=glass,pose,gender,age,race,smiling");
+
+		BufferedReader in = new BufferedReader(
+				new InputStreamReader(url.openStream()));
+
+		String inputLine;
+		while ((inputLine = in.readLine()) != null)
+			results += inputLine + "\n";
+		in.close();
+
+		return results;
 	}
 
 	public static void faceAnalyze(String imageURL, boolean riskEdges) throws IOException {
@@ -118,7 +166,9 @@ public class FaceRec {
 		String results = getFaces(imageURL);
 
 
-		/* GET HEIGHTS */
+		/*
+		GET HEIGHTS
+		 */
 
 		String[] parts = results.split("}, \n" +
 				"                \"height\": ");
@@ -133,7 +183,9 @@ public class FaceRec {
 		}
 
 
-		/* GET CENTER XS */
+		/*
+		GET CENTER XS
+		 */
 
 		String[] parts2 = results.split("\"center\": \\{\n" +
 				"                    \"x\": ");
@@ -232,14 +284,14 @@ public class FaceRec {
 				rect = new Rectangle(topCornerXs.get(i), topCornerYs.get(i), actualFaceHeights.get(i), actualFaceHeights.get(i));
 			}
 
-			ImageUtils.cropAndSave(img, rect, "image" + imageNumber + "");
-			imageNumber++; // TODO: Improve loop logic?
+			ImageUtils.cropAndSave(img, rect, "image" + Variables.imageNumber + "");
+			Variables.imageNumber++; // TODO: Do something not terrible
 		}
 	}
 
 
 	public static List<String> getFaceJSON(String imageURL) throws IOException, URISyntaxException {
-		List<String> results = new ArrayList<>();
+		List<String> results = new ArrayList<String>();
 
 		//Url: http://apius.faceplusplus.com/v2/detection/detect?api_key=aa8b4b83d3c198dab0cb90e915f1cdf1&api_secret=bg71y3KbnCUUYQjxqX6pWyH0JNFVsv-L&url=https://electronneutrino.com/stalking/stalkb.jpg&attribute=age%2Cgender%2Crace%2Csmiling%2Cpose%2Cglass
 
