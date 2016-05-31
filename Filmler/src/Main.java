@@ -2,6 +2,8 @@ import Utils.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.*;
 
 public class Main {
@@ -25,14 +27,14 @@ public class Main {
 
 		imagesToPeople = TagFaces.run(args);
 
-		System.out.println("Images and People: " + imagesToPeople);
+		System.out.println("Images to People: " + imagesToPeople);
 
 		boolean success = false;
-		/*try {
+		try {
 			success = new Main().analyze();
 		} catch (IOException | URISyntaxException e) {
 			e.printStackTrace();
-		}*/
+		}
 
 		System.out.println(success ? "Success." : "Fail.");
 
@@ -107,8 +109,7 @@ public class Main {
 
 		return true;
 	}
-
-
+*/
 	public boolean analyze() throws IOException, URISyntaxException {
 		for (String imageURL : imageURLs) {
 			System.out.println("Doing " + imageURL);
@@ -116,5 +117,5 @@ public class Main {
 		}
 
 		return true;
-	}*/
+	}
 }

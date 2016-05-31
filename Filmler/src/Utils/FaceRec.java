@@ -1,7 +1,5 @@
 package Utils;
 
-//import org.apache.commons.lang3.StringUtils;
-
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -72,9 +70,10 @@ public class FaceRec {
 	 * @param imageURL - the url of the image
 	 * @return - the unique ID of the image
 	 */
+	// TODO: Make this do what it says
 	public static String addFace(String imageURL) throws IOException {
-		String results = get("https://apius.faceplusplus.com/v2/detection/detect?url=" + URLEncoder.encode(imageURL) + "&api_secret=" + Constants.SECRET_KEY + "&api_key=" + Constants.API_KEY + "&attribute=pose");
-		//https://apius.faceplusplus.com/v2/detection/detect?url=http%3A%2F%2Ffaceplusplus.com%2Fstatic%2Fimg%2Fdemo%2F1.jpg&api_secret=YOUR_API_SECRET&api_key=YOUR_API_KEY&attribute=pose
+		String results = get("https://apius.faceplusplus.com/v2/detection/detect?url=" + URLEncoder.encode(imageURL) + "&api_secret=" + Constants.SECRET_KEY + "&api_key=" + Constants.API_KEY + "&attribute=none");
+		//https://apius.faceplusplus.com/v2/detection/detect?url=http%3A%2F%2Ffaceplusplus.com%2Fstatic%2Fimg%2Fdemo%2F1.jpg&api_secret=YOUR_API_SECRET&api_key=YOUR_API_KEY&attribute=none
 
 		String[] parts = results.split("\"face_id\": \"");
 		String[] subparts = parts[1].split("\",\n" +
@@ -99,41 +98,48 @@ public class FaceRec {
 		return get("https://apius.faceplusplus.com/v2/faceset/create?api_key=" + Constants.API_KEY + "&api_secret=" + Constants.SECRET_KEY + "&tag=" + tag + "&faceset_name=" + facesetName);
 	}
 
-	public static int getFaceNum(String imageURL) throws IOException {
-		String result = getFaces(imageURL);
-
-		return (result.length() - result.replace("face_id", "").length()) / "face_id".length();
+	public static int getFaceNum(String results) throws IOException {
+		return (results.length() - results.replace("face_id", "").length()) / "face_id".length();
 	}
 
 	public static String getFaces(String imageURL) throws IOException {
-		//https://apius.faceplusplus.com/v2/detection/detect?url=http://sigmacamp.org/sites/default/files/galleries/301/20140817-A96A8117.jpg&api_secret=bg71y3KbnCUUYQjxqX6pWyH0JNFVsv-L&api_key=aa8b4b83d3c198dab0cb90e915f1cdf1&attribute=pose
-		return get("https://apius.faceplusplus.com/v2/detection/detect?url=" + imageURL + "&api_secret=" + Constants.SECRET_KEY + "&api_key=" + Constants.API_KEY + "&attribute=pose");
+		//https://apius.faceplusplus.com/v2/detection/detect?url=http://sigmacamp.org/sites/default/files/galleries/301/20140817-A96A8117.jpg&api_secret=bg71y3KbnCUUYQjxqX6pWyH0JNFVsv-L&api_key=aa8b4b83d3c198dab0cb90e915f1cdf1&attribute=none
+		return get("https://apius.faceplusplus.com/v2/detection/detect?url=" + imageURL + "&api_secret=" + Constants.SECRET_KEY + "&api_key=" + Constants.API_KEY + "&attribute=none");
 	}
 
 	public static void faceAnalyze(String imageURL, boolean riskEdges) throws IOException {
-		List<Float> faceHeights = new ArrayList<>();
-		List<Float> faceCenterXs = new ArrayList<>();
-		List<Float> faceCenterYs = new ArrayList<>();
+		List<Integer> faceHeights = new ArrayList<>();
+		List<Integer> faceCenterXs = new ArrayList<>();
+		List<Integer> faceCenterYs = new ArrayList<>();
 
 		String results = getFaces(imageURL);
+		int faceNum = getFaceNum(results);
 
+		int imageHeight = Integer.parseInt(results.substring(results.indexOf("img_height") + 13, results.indexOf(',', results.indexOf("img_height"))));
+		int imageWidth = Integer.parseInt(results.substring(results.indexOf("img_width") + 12, results.indexOf(',', results.indexOf("img_width"))));
+		System.out.println("Image Height: " + imageHeight);
+		System.out.println("Image Width: " + imageWidth);
 
-		/* GET HEIGHTS */
+		/* GET FACE HEIGHTS */
+		// We don't need widths because we crop to squares
 
 		String[] parts = results.split("}, \n" +
 				"                \"height\": ");
 
+		System.out.println("PARTS0 = " + parts[0]);
 		for (int i = 1; i < parts.length; i++) { //Start with 1, because 0 is trash
 			String p = parts[i];
+			System.out.println("Parts " + i + " = " + p);
 
 			String[] subParts = p.split(", \n" +
 					"                \"mouth_left\":");
-			float height = Float.parseFloat(subParts[0]);
-			faceHeights.add(height);
+
+			float faceHeight = Float.parseFloat(subParts[0]);
+			faceHeights.add((int) (faceHeight / 100 * imageHeight)); // Convert percent to pixel
 		}
 
 
-		/* GET CENTER XS */
+		/* GET FACE CENTER Xs */
 
 		String[] parts2 = results.split("\"center\": \\{\n" +
 				"                    \"x\": ");
@@ -144,13 +150,11 @@ public class FaceRec {
 			String[] subParts = p.split(", \n" +
 					"                    \"y\": ");
 			float faceCenterX = Float.parseFloat(subParts[0]);
-			faceCenterXs.add(faceCenterX);
+			faceCenterXs.add((int) (faceCenterX / 100 * imageWidth));
 		}
 
 
-		/*
-		GET CENTER YS
-		 */
+		/* GET FACE CENTER Ys */
 
 		String[] parts3 = results.split("\\}");
 
@@ -163,76 +167,43 @@ public class FaceRec {
 						"                ");
 
 				float faceCenterY = Float.parseFloat(subParts[0]);
-				faceCenterYs.add(faceCenterY);
+				faceCenterYs.add((int) (faceCenterY / 100 * imageHeight));
 			}
 		}
 
-
-		//Now, we crop the faces
-
-		//Get absolute pixels
-
-		//First, get the image width and the image height
-		//h = height
-		//w = width
-
-		String[] getHeight0 = results.split("\"img_height\": ");
-		String[] getHeight1 = getHeight0[1].split(", \n" +
-				"    \"img_id\": \"");
-		float h = Float.parseFloat(getHeight1[0]);
-		System.out.println("Height: " + h);
-
-		String[] getWidth0 = results.split("\", \n" +
-				"    \"img_width\": ");
-		String[] getWidth1 = getWidth0[1].split(", \n" +
-				"    \"session_id\": \"");
-		float w = Float.parseFloat(getWidth1[0]);
-		System.out.println("Width: " + w);
+		System.out.println("Face height: " + faceHeights + ", FaceX: " + faceCenterXs + ", FaceY: " + faceCenterYs);
 
 
-		//Get the actual face heights
-		List<Integer> actualFaceHeights = new ArrayList<>();
-		for (int faceHeight : faceHeights) {
-			actualFaceHeights.add(faceHeight * h / 100);
-		}
-
-		//Get the actual x-values TODO: Make sure this isn't switched with the y-values
-		List<Integer> actualXValues = new ArrayList<>();
-		for (int xValue : faceCenterXs) {
-			actualXValues.add(xValue * w / 100);
-		}
-
-		for (float actualXValue : actualXValues) {
-			System.out.println("aXV:" + actualXValue);
-		}
-
-		//Get the actual y-values TODO: Make sure this isn't switched with the x-values
-		List<Integer> actualYValues = new ArrayList<>();
-		for (float yValue : faceCenterYs) {
-			actualYValues.add(yValue * h / 100);
-		}
+		// Now, we crop the faces
 
 		List<Integer> topCornerXs = new ArrayList<>();
-		for (int i = 0; i < actualFaceHeights.size(); i++) {
-			topCornerXs.add((int) (actualXValues.get(i) - actualFaceHeights.get(i) / (float) 2.0));
+		for (int i = 0; i < faceNum; i++) {
+			topCornerXs.add((faceCenterXs.get(i) - faceHeights.get(i)) / 2);
 		}
 
 		List<Integer> topCornerYs = new ArrayList<>();
-		for (int i = 0; i < actualFaceHeights.size(); i++) {
-			topCornerYs.add((int) (actualYValues.get(i) - actualFaceHeights.get(i) / (float) 2.0));
+		for (int i = 0; i < faceNum; i++) {
+			topCornerYs.add((faceCenterYs.get(i) - faceHeights.get(i)) / 2);
 		}
 
-		for (int i = 0; i < actualFaceHeights.size(); i++) {
-			Rectangle rect;
+		System.out.println("TopX: " + topCornerXs + ", TopY: " + topCornerYs);
 
-			BufferedImage img = ImageIO.read(new URL(imageURL));
+		for (int i = 0; i < faceNum; i++) {
+			Rectangle rect;
+			System.out.println("Preparing to make an image from " + imageURL);
+			URL url = new URL("https://docs.oracle.com/javase/tutorial/images/oracle-java-logo.png");
+			System.out.println("URL = " + url);
+			BufferedImage img = ImageIO.read(url); // This line causes a fatal error in the JRE
+			// The URL is not local, but is a link on the web.
+			System.out.println("What???");
 			if (riskEdges) {
 				rect = new Rectangle(0, 0, 1, 1); //Improve this @derikk
 			} else {
-				rect = new Rectangle(topCornerXs.get(i), topCornerYs.get(i), actualFaceHeights.get(i), actualFaceHeights.get(i));
+				rect = new Rectangle(topCornerXs.get(i), topCornerYs.get(i), faceHeights.get(i), faceHeights.get(i));
 			}
+			System.out.println("Rectangle: " + rect);
 
-			ImageUtils.cropAndSave(img, rect, "image" + imageNumber + "");
+			//ImageUtils.cropAndSave(img, rect, "image" + imageNumber + "");
 			imageNumber++; // TODO: Improve loop logic?
 		}
 	}
@@ -241,9 +212,9 @@ public class FaceRec {
 	public static List<String> getFaceJSON(String imageURL) throws IOException, URISyntaxException {
 		List<String> results = new ArrayList<>();
 
-		//Url: http://apius.faceplusplus.com/v2/detection/detect?api_key=aa8b4b83d3c198dab0cb90e915f1cdf1&api_secret=bg71y3KbnCUUYQjxqX6pWyH0JNFVsv-L&url=https://electronneutrino.com/stalking/stalkb.jpg&attribute=age%2Cgender%2Crace%2Csmiling%2Cpose%2Cglass
+		//Url: http://apius.faceplusplus.com/v2/detection/detect?api_key=aa8b4b83d3c198dab0cb90e915f1cdf1&api_secret=bg71y3KbnCUUYQjxqX6pWyH0JNFVsv-L&url=https://electronneutrino.com/stalking/stalkb.jpg&attribute=none
 
-		URL url = new URL("http://apius.faceplusplus.com/v2/detection/detect?api_key=" + Constants.API_KEY + "&api_secret=" + Constants.SECRET_KEY + "&url=" + imageURL + "&attribute=age%2Cgender%2Crace%2Csmiling%2Cpose%2Cglass");
+		URL url = new URL("http://apius.faceplusplus.com/v2/detection/detect?api_key=" + Constants.API_KEY + "&api_secret=" + Constants.SECRET_KEY + "&url=" + imageURL + "&attribute=none");
 		BufferedReader in = new BufferedReader(
 				new InputStreamReader(url.openStream()));
 
