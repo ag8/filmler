@@ -60,7 +60,7 @@ public class TagFaces extends Application {
 
 
 	/**
-	 * Get name
+	 * Ask user to tag a face with a name
 	 * @param url the filepath of the photo
 	 */
 	private void getName(String url) {
@@ -110,10 +110,6 @@ public class TagFaces extends Application {
 		s.setScene(appScene);
 		s.setMinWidth(400);
 		s.show();
-	}
-
-	private void test() {
-		System.out.println("Works!");
 	}
 
 	private void handleClick(String name) {

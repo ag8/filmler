@@ -126,10 +126,10 @@ public class FaceRec {
 		String[] parts = results.split("}, \n" +
 				"                \"height\": ");
 
-		System.out.println("PARTS0 = " + parts[0]);
+		//System.out.println("PARTS0 = " + parts[0]);
 		for (int i = 1; i < parts.length; i++) { //Start with 1, because 0 is trash
 			String p = parts[i];
-			System.out.println("Parts " + i + " = " + p);
+			//System.out.println("Parts " + i + " = " + p);
 
 			String[] subParts = p.split(", \n" +
 					"                \"mouth_left\":");
@@ -178,24 +178,21 @@ public class FaceRec {
 
 		List<Integer> topCornerXs = new ArrayList<>();
 		for (int i = 0; i < faceNum; i++) {
-			topCornerXs.add((faceCenterXs.get(i) - faceHeights.get(i)) / 2);
+			topCornerXs.add(faceCenterXs.get(i) - faceHeights.get(i) / 2);
 		}
 
 		List<Integer> topCornerYs = new ArrayList<>();
 		for (int i = 0; i < faceNum; i++) {
-			topCornerYs.add((faceCenterYs.get(i) - faceHeights.get(i)) / 2);
+			topCornerYs.add(faceCenterYs.get(i) - faceHeights.get(i) / 2);
 		}
 
 		System.out.println("TopX: " + topCornerXs + ", TopY: " + topCornerYs);
 
 		for (int i = 0; i < faceNum; i++) {
 			Rectangle rect;
-			System.out.println("Preparing to make an image from " + imageURL);
-			URL url = new URL("https://docs.oracle.com/javase/tutorial/images/oracle-java-logo.png");
-			System.out.println("URL = " + url);
-			BufferedImage img = ImageIO.read(url); // This line causes a fatal error in the JRE
-			// The URL is not local, but is a link on the web.
-			System.out.println("What???");
+			URL url = new URL(imageURL);
+			BufferedImage img = ImageIO.read(url);
+			System.out.println("Cropping a face from " + imageURL);
 			if (riskEdges) {
 				rect = new Rectangle(0, 0, 1, 1); //Improve this @derikk
 			} else {
@@ -203,7 +200,7 @@ public class FaceRec {
 			}
 			System.out.println("Rectangle: " + rect);
 
-			//ImageUtils.cropAndSave(img, rect, "image" + imageNumber + "");
+			ImageUtils.cropAndSave(img, rect, "image" + imageNumber + "");
 			imageNumber++; // TODO: Improve loop logic?
 		}
 	}

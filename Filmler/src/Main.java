@@ -25,18 +25,17 @@ public class Main {
 		urlsFile.close();
 
 
-		imagesToPeople = TagFaces.run(args);
-
-		System.out.println("Images to People: " + imagesToPeople);
-
 		boolean success = false;
 		try {
-			success = new Main().analyze();
+			success = analyze();
 		} catch (IOException | URISyntaxException e) {
 			e.printStackTrace();
 		}
-
 		System.out.println(success ? "Success." : "Fail.");
+
+
+		imagesToPeople = TagFaces.run(args);
+		System.out.println("Images to People: " + imagesToPeople);
 
 		// Create list of people
 		listOfPeople = new ArrayList<>();
@@ -110,7 +109,7 @@ public class Main {
 		return true;
 	}
 */
-	public boolean analyze() throws IOException, URISyntaxException {
+	public static boolean analyze() throws IOException, URISyntaxException {
 		for (String imageURL : imageURLs) {
 			System.out.println("Doing " + imageURL);
 			FaceRec.faceAnalyze(imageURL, false);
