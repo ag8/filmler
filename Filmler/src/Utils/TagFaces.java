@@ -16,54 +16,42 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class TagFaces extends Application {
-	final static String urlBase = System.getProperty("user.dir") + "/images/";
-	public static Map<String, String> mp = new HashMap<>(); // Map from photo URLs to names
-	public static int photoNum = 0;
-	public static List<String> urls = new ArrayList<>();    // List of photo URLs
+	public static int faceNum = 0;
+	public static List<Face> faces = new ArrayList<>(); // List of untagged faces
+	public static List<Person> people = new ArrayList<>();  // List of people
 
 	FlowPane tagPane;
 	FlowPane picPane;
 
 	Image photo;
-	ImageView maskView;
 	static Stage s;
 
-	public static Map<String, String> run(String args[]) {
-		launch(args);
-		return mp;
+	public static List<Person> run(List<Face> facePool) {
+		faces = facePool;
+		launch();
+		return people;
 	}
 
 	@Override
 	/**
-	 * Create a list of photo URLs
+	 * Initialize the stage and open the first tagging window
 	 */
 	public void start(Stage primaryStage) {
-		System.out.println(urlBase);
-		boolean exists = true;
-		for (int i = 0; exists; i++) {
-			File f = new File(urlBase + "image" + i + ".jpg");
-			System.out.println(f.getAbsolutePath());
-			exists = f.exists();
-			if (exists) urls.add("image" + i + ".jpg");
-		}
 		s = primaryStage;
-		getName(urls.get(0)); // Open the first window explicitly. The following windows are opened after tagging.
+		getName(faces.get(0)); // Open the first window explicitly. The following windows are opened after tagging.
 	}
 
 
 
 	/**
 	 * Ask user to tag a face with a name
-	 * @param url the filepath of the photo
+	 * @param face the face to be tagged
 	 */
-	private void getName(String url) {
+	private void getName(Face face) {
 		/* Window setup */
 		s = new Stage();
 		s.setTitle("Tag Photos");
@@ -89,18 +77,16 @@ public class TagFaces extends Application {
 		Button nameSubmit = new Button("Tag");
 		nameSubmit.setDefaultButton(true);
 
-		photo = new Image("file://" + urlBase + url, 300, 300, false, false);
+		System.out.println("Face file: " + face.croppedFile.toURI().toString());
+		photo = new Image(face.croppedFile.toURI().toString(), 300, 300, false, true);
 		ImageView maskView = new ImageView(photo);
 		final Circle mask = new Circle(150, 150, 150);
 		maskView.setClip(mask);
 
 		nameSubmit.setOnAction(e -> new TagFaces().handleClick(nameField.getText()));
 
-		tagPane.getChildren().add(textLabel);
-		tagPane.getChildren().add(nameField);
-		tagPane.getChildren().add(nameSubmit);
-		picPane.getChildren().add(directions);
-		picPane.getChildren().add(maskView);
+		tagPane.getChildren().addAll(textLabel, nameField, nameSubmit);
+		picPane.getChildren().addAll(directions, maskView);
 
 		componentLayout.setBottom(tagPane);
 		componentLayout.setTop(picPane);
@@ -114,14 +100,28 @@ public class TagFaces extends Application {
 
 	private void handleClick(String name) {
 		if (!name.isEmpty()) {
-			mp.put(urls.get(photoNum), name);
-			System.out.println("Photo Number: " + photoNum + ", Name: " + name + ".");
-			System.out.println(mp);
+			// Create a list of people containing the names of everyone who was tagged
+			boolean personInList = false;
+			for (Person p : people) {
+				if (p.getName().equalsIgnoreCase(name)) {
+					// Person tagged in the photo was found in list, so add the photo URL to the person.
+					p.addFace(faces.get(faceNum));
+					personInList = true;
+					break;
+				}
+			}
+			if (!personInList) {
+				// Person tagged in the photo was not found in the list, so make a new person.
+				Person p = new Person(name);
+				p.addFace(faces.get(faceNum));
+				people.add(p);
+			}
+			System.out.println("Photo Number: " + faceNum + ", Name: " + name + ", Face: " + faces.get(faceNum) + ".");
 		}
 		s.close();
-		photoNum++;
-		if (photoNum < urls.size()) {
-			getName(urls.get(photoNum));
+		faces.remove(faceNum++);
+		if (faceNum < faces.size()) {
+			getName(faces.get(faceNum));
 		} else {
 			System.out.println("All done!");
 		}

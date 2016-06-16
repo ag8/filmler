@@ -2,119 +2,86 @@ import Utils.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.*;
 
 public class Main {
 	public final static String urlBase = System.getProperty("user.dir");
 
-	public static Map<String, String> imagesToPeople;
+	public static List<Face> facePool; // List of all faces recognized by Face++. Each face has an ID and cropped URL.
+	public static List<Person> people;
 
-	public static List<String> imageURLs;
+	public static void main(String[] args) {
+		/* Set up LIST OF TRAINING URLS from training.txt */
+		List<String> trainingURLs = loadURLs(new File(urlBase + "/files/training.txt"));
 
-	public static List<Person> listOfPeople;
-
-	public static void main(String[] args) throws FileNotFoundException {
-		// Set up main image urls from urls.txt
-		Scanner urlsFile = new Scanner(new File(urlBase + "/files/urls.txt"));
-		imageURLs = new ArrayList<>();
-		while (urlsFile.hasNextLine()) {
-			imageURLs.add(urlsFile.nextLine());
+		/* CREATE FACEPOOL using FaceRec */
+		facePool = new ArrayList<>();
+		for (String url : trainingURLs) {
+			System.out.println("Creating faces from " + url);
+			facePool.addAll(FaceRec.createFaces(url));
 		}
-		urlsFile.close();
+		System.out.println("FacePool =======================");
+		facePool.forEach(System.out::println);
 
+		/* CREATE LIST OF PEOPLE using TagFaces */
+		people = TagFaces.run(facePool);
+		System.out.println("People =========================");
+		people.forEach(System.out::println);
 
-		boolean success = false;
+		analyzeInteractions();
+	}
+
+	public static void analyzeInteractions() {
+		String groupName = "sigmapeople";
+		FaceRec.createGroup(groupName);
+		for (Person p : people) {
+			FaceRec.createPerson(p.getName(), groupName);
+			for (Face f : p.getFaces()) {
+				FaceRec.associateFace(p.getName(), f.ID);
+			}
+		}
+
+		System.out.println(FaceRec.getGroupInfo(groupName));
+
+		FaceRec.trainIdentify(groupName);
 		try {
-			success = analyze();
-		} catch (IOException | URISyntaxException e) {
+			Thread.sleep(1000); // Wait for the training. TODO: Check the HTTP status to see when it's done
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		System.out.println(success ? "Success." : "Fail.");
 
-
-		imagesToPeople = TagFaces.run(args);
-		System.out.println("Images to People: " + imagesToPeople);
-
-		// Create list of people
-		listOfPeople = new ArrayList<>();
-		for (String image : imagesToPeople.keySet()) {
-			System.out.println("Now analyzing " + image + " and " + imagesToPeople.get(image) + "______________________");
-
-			String personName = imagesToPeople.get(image);
-			int indexOfPersonInOfficialListOfPeople = -1;
-			for (Person p : listOfPeople) {
-				if (p.getName().equals(personName)) {
-					indexOfPersonInOfficialListOfPeople = listOfPeople.indexOf(p);
+		List<String> eventURLs = loadURLs(new File(urlBase + "/files/event.txt")); // URLs of all photos from the event
+		for (String url : eventURLs) {
+			List<String> names = FaceRec.identifyFaces(groupName, url);
+			List<Person> peopleInPhoto = new ArrayList<>(names.size());
+			for (Person p : people) {
+				for (String name : names) {
+					if (p.getName().equals(name)) {
+						peopleInPhoto.add(p);
+					}
 				}
 			}
-
-			if (indexOfPersonInOfficialListOfPeople > -1) { // Person found in list
-				listOfPeople.get(indexOfPersonInOfficialListOfPeople).addLocalURL(urlBase + "/images/" + image);
-			} else {
-				System.out.println("Adding image " + image);
-				Person newPerson = new Person(imagesToPeople.get(image));
-
-				newPerson.addLocalURL(urlBase + "/images/" + image);
-				listOfPeople.add(newPerson);
+			for (Person p : peopleInPhoto) {
+				//for (Person )
 			}
 		}
 
-		boolean success2 = false;
-		/*try {
-			success2 = new Main().analyzeInteractions();
-		} catch (IOException e) {
+	}
+
+	public static List<String> loadURLs(File urlsFile) {
+		Scanner urlsIn = null;
+		try {
+			urlsIn = new Scanner(urlsFile);
+		} catch (FileNotFoundException e) {
+			System.out.println("URLs file not found. Put it in " + urlsFile.toPath());
 			e.printStackTrace();
-		}*/
-		System.out.println(success2 ? "Success2." : "Fail2.");
-	}
-
-	/*public boolean analyzeInteractions() throws IOException {
-		for ( Person p : listOfPeople) {
-			for (String localURL : p.getLocalURLs()) {
-				System.out.println("Person " + p.getName() + " has local URL " + localURL);
-
-				BufferedImage img = null;
-				try {
-					img = ImageIO.read(new File(localURL));
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-
-				String base64string = ImageUtils.encodeToString(img, "jpg");
-
-				String g = ImageUtils.uploadImage(base64string);
-
-				List<String> images = p.getImages();
-				images.add(g);
-				p.setImages(images);
-			}
 		}
 
-		for ( Person p : listOfPeople) {
-			System.out.println(p.getName() + "::::::::::::::::::::::::::::::::::::::::::::::");
-			for (String url : p.getImages()) {
-				System.out.println(url);
-			}
+		List<String> imageURLs = new ArrayList<>();
+		while (urlsIn != null && urlsIn.hasNextLine()) {
+			imageURLs.add(urlsIn.nextLine());
 		}
-
-		FaceRec.groupCreate("test1", "sigmapeople1");
-		for (Person p : listOfPeople) {
-			FaceRec.personCreate("test1", p.getName(), "sigmapeople1");
-		}
-
-		System.out.println(FaceRec.groupGetInfo("sigmapeople1"));
-
-		return true;
-	}
-*/
-	public static boolean analyze() throws IOException, URISyntaxException {
-		for (String imageURL : imageURLs) {
-			System.out.println("Doing " + imageURL);
-			FaceRec.faceAnalyze(imageURL, false);
-		}
-
-		return true;
+		if (urlsIn != null) urlsIn.close();
+		return imageURLs;
 	}
 }
